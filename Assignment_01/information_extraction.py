@@ -291,7 +291,7 @@ def main():
         qdoc = nlp(unicode(question))
         place=[t.text for t in qdoc.ents if t.label_=='GPE']
         for trip in trips:
-            print(trip.departs_to)
+            #print(trip.departs_to)
             if trip.departs_to [0]== place[0]:
                 print(trip.name)
 
