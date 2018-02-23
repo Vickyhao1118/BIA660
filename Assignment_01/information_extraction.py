@@ -338,7 +338,8 @@ def main():
         qdoc=nlp(unicode(question))
         personB = [e.text for e in qdoc.ents if e.label_ == 'PERSON'][0]
         for person in persons:
-            for personC in person.likes:
+            personlike=set(person.likes)
+            for personC in personlike:
                 if personC.name == personB:
                     print(person)
     # 6) Who does <person> like?
