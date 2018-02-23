@@ -332,6 +332,7 @@ def main():
             if  r== placeA and len(trip.time)>0:
                 print(trip.time)
 
+
     # 5) Who likes <person>?
     if 'who' in q_trip.subject.lower() and root.lemma_ == 'like':
         qdoc=nlp(unicode(question))
