@@ -1,82 +1,100 @@
 # coding: utf-8
-## Hao Cheng(10426048)
+###Hao Cheng(10426048)
 
-# In[1]:
+# In[164]:
+
 
 from selenium import webdriver
 from selenium.webdriver.support.select import Select
 
-# In[2]:
+# In[165]:
+
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
-# In[3]:
+# In[166]:
+
 
 import requests
 import bs4
 
-# In[71]:
+# In[167]:
+
 
 driver = webdriver.Firefox(executable_path=r'geckodriver')
 
-# In[72]:
+# In[168]:
+
 
 driver.get('http://www.mlb.com')
 
-# In[6]:
+# In[169]:
+
 
 stats_header_bar = driver.find_element_by_css_selector('.megamenu-navbar-overflow__menu-item-link--stats')
 
-# In[7]:
+# In[170]:
+
 
 stats_header_bar.click()
 
-# In[8]:
+# In[171]:
+
 
 stats_header_bar.click()
 
 # ### Problem_1
 
-# In[9]:
+# In[172]:
 
-team_bar = driver.find_element_by_css_selector('li.right_border:nth-child(5)')
 
-# In[10]:
+team_bar = driver.find_element_by_css_selector('#st_parent')
+
+# In[173]:
+
 
 team_bar.click()
 
-# In[11]:
+# In[174]:
+
 
 season_2015_bar = driver.find_element_by_css_selector('#st_hitting_season > option:nth-child(4)')
 
-# In[12]:
+# In[175]:
+
 
 season_2015_bar.click()
 
-# In[13]:
+# In[176]:
+
 
 regular_bar = driver.find_element_by_css_selector('#st_hitting_game_type > option:nth-child(1)')
 
-# In[14]:
+# In[177]:
+
 
 regular_bar.click()
 
-# In[15]:
+# In[178]:
+
 
 HR_bar = driver.find_element_by_css_selector('th.dg-hr > abbr:nth-child(1)')
 
-# In[16]:
+# In[179]:
+
 
 HR_bar.click()
 
-# In[17]:
+# In[180]:
+
 
 import pandas as pd
 
-# In[18]:
+# In[181]:
+
 
 data_div = driver.find_element_by_id('datagrid')
 data_html = data_div.get_attribute('innerHTML')
@@ -84,60 +102,66 @@ soup = bs4.BeautifulSoup(data_html, "html5lib")
 head = [t.text.replace("▼", "") for t in soup.thead.find_all("th")]
 df_home_run = pd.DataFrame(columns=head)
 
-# In[19]:
+# In[182]:
 
-context_table_q1 = []
-for t in soup.tbody.find_all("tr"):
-    for a in t.find_all("td"):
-        context_table_q1.append(a.text)
-context_table_q1
 
-# In[20]:
+data = []
+table = soup.find('table', attrs={'class': 'stats_table data_grid'})
+table_body = table.find('tbody')
+rows = table_body.find_all('tr')
+for row in rows:
+    cols = row.find_all('td')
+    cols = [ele.text.strip() for ele in cols]
+    data.append([ele for ele in cols if ele])
+data
 
-context_table_q1_prettify = []
-for i in range(int(len(context_table_q1) / len(head))):
-    s = context_table_q1[i * len(head):(i + 1) * len(head)]
-    context_table_q1_prettify.append(s)
+# In[183]:
 
-# In[21]:
 
-context_table_q1_prettify
+data
 for i in range(30):
-    df_home_run.loc[i] = context_table_q1_prettify[i]
+    df_home_run.loc[i] = data[i]
 
 df_home_run.drop("", axis=1)
 
-# In[22]:
+# In[184]:
+
 
 df_home_run.to_csv('Question_1.csv')
 
-# In[24]:
+# In[187]:
+
 
 Most_HR_Team = driver.find_element_by_css_selector(
-    '#_386451520446224440 > tbody:nth-child(34) > tr:nth-child(1) > td:nth-child(2) > a:nth-child(1)').text
+    '#_475461521503719981 > tbody:nth-child(34) > tr:nth-child(1) > td:nth-child(2) > a:nth-child(1)').text
 Most_HR_Team
 
 # ### Problem_2
 
 # #### a）
 
-# In[25]:
+# In[188]:
+
 
 AL_bar = driver.find_element_by_css_selector('#st_hitting-0 > fieldset:nth-child(2) > label:nth-child(4)')
 
-# In[26]:
+# In[189]:
+
 
 AL_bar.click()
 
-# In[27]:
+# In[190]:
+
 
 Regular_bar = driver.find_element_by_css_selector('#st_hitting_game_type > option:nth-child(1)')
 
-# In[28]:
+# In[191]:
+
 
 Regular_bar.click()
 
-# In[29]:
+# In[192]:
+
 
 data1_div = driver.find_element_by_id('datagrid')
 data1_html = data1_div.get_attribute('innerHTML')
@@ -145,62 +169,70 @@ soup1 = bs4.BeautifulSoup(data1_html, "html5lib")
 head1 = [t.text.replace("▼", "") for t in soup1.thead.find_all("th")]
 df_home1_run = pd.DataFrame(columns=head1)
 
-# In[30]:
+# In[193]:
 
-context_table_q2 = []
-for t in soup1.tbody.find_all("tr"):
-    for a in t.find_all("td"):
-        context_table_q2.append(a.text)
-context_table_q2
 
-# In[31]:
+data1 = []
+table1 = soup1.find('table', attrs={'class': 'stats_table data_grid'})
+table_body1 = table1.find('tbody')
+rows1 = table_body1.find_all('tr')
+for row in rows1:
+    cols = row.find_all('td')
+    cols = [ele.text.strip() for ele in cols]
+    data1.append([ele for ele in cols if ele])
+data1
 
-context_table_q2_prettify = []
-for i in range(int(len(context_table_q2) / len(head))):
-    s = context_table_q2[i * len(head):(i + 1) * len(head)]
-    context_table_q2_prettify.append(s)
+# In[194]:
 
-# In[32]:
 
-context_table_q2_prettify
+data1
 for i in range(15):
-    df_home1_run.loc[i] = context_table_q2_prettify[i]
+    df_home1_run.loc[i] = data1[i]
 
 df_home1_run.drop("", axis=1)
 
-# In[33]:
+# In[195]:
+
 
 df_home1_run.to_csv('Question_2a_AL.csv')
 
-# In[34]:
+# In[196]:
+
 
 import numpy as np
 
-# In[35]:
+# In[197]:
+
 
 HR_average_AL = pd.DataFrame(df_home1_run['HR'], dtype=np.float)
 
-# In[36]:
+# In[198]:
+
 
 print('the average number of AL is', HR_average_AL['HR'].mean())
 
-# In[37]:
+# In[199]:
+
 
 NL_bar = driver.find_element_by_css_selector('#st_hitting-0 > fieldset:nth-child(2) > label:nth-child(6)')
 
-# In[38]:
+# In[200]:
+
 
 NL_bar.click()
 
-# In[39]:
+# In[201]:
+
 
 Reg_bar = driver.find_element_by_css_selector('#st_hitting_game_type > option:nth-child(1)')
 
-# In[40]:
+# In[202]:
+
 
 Reg_bar.click()
 
-# In[41]:
+# In[203]:
+
 
 data2_div = driver.find_element_by_id('datagrid')
 data2_html = data1_div.get_attribute('innerHTML')
@@ -208,42 +240,41 @@ soup2 = bs4.BeautifulSoup(data2_html, "html5lib")
 head2 = [t.text.replace("▼", "") for t in soup2.thead.find_all("th")]
 df_home2_run = pd.DataFrame(columns=head2)
 
-# In[42]:
+# In[204]:
 
-context_table_q3 = []
-for t in soup2.tbody.find_all("tr"):
-    for a in t.find_all("td"):
-        context_table_q3.append(a.text)
-context_table_q3
 
-# In[43]:
+data2 = []
+table2 = soup2.find('table', attrs={'class': 'stats_table data_grid'})
+table_body2 = table2.find('tbody')
+rows2 = table_body2.find_all('tr')
+for row in rows2:
+    cols = row.find_all('td')
+    cols = [ele.text.strip() for ele in cols]
+    data2.append([ele for ele in cols if ele])
+data2
 
-context_table_q3_prettify = []
-for i in range(int(len(context_table_q3) / len(head))):
-    s = context_table_q3[i * len(head):(i + 1) * len(head)]
-    context_table_q3_prettify.append(s)
-
-# In[44]:
-
-context_table_q3_prettify
 for i in range(15):
-    df_home2_run.loc[i] = context_table_q3_prettify[i]
+    df_home2_run.loc[i] = data2[i]
 
 df_home2_run.drop("", axis=1)
 
-# In[45]:
+# In[205]:
+
 
 df_home2_run.to_csv('Question_2a_NL.csv')
 
-# In[46]:
+# In[206]:
+
 
 HR_average_NL = pd.DataFrame(df_home2_run['HR'], dtype=np.float)
 
-# In[47]:
+# In[207]:
+
 
 print('the average number of NL is', HR_average_NL['HR'].mean())
 
-# In[48]:
+# In[208]:
+
 
 if HR_average_AL['HR'].mean() >= HR_average_NL['HR'].mean():
     print("the greatest average number of American league homeruns is AL:", HR_average_AL['HR'].mean())
@@ -252,17 +283,20 @@ else:
 
 # #### b)
 
-# In[49]:
+# In[209]:
+
 
 first_inning = driver.find_element_by_id("st_hitting_hitting_splits")
 first_inning_select = Select(first_inning)
 first_inning_select.select_by_visible_text('First Inning')
 
-# In[50]:
+# In[210]:
+
 
 first_inning.click()
 
-# In[51]:
+# In[211]:
+
 
 data3_div = driver.find_element_by_id('datagrid')
 data3_html = data3_div.get_attribute('innerHTML')
@@ -270,50 +304,51 @@ soup3 = bs4.BeautifulSoup(data3_html, "html5lib")
 head3 = [t.text.replace("▼", "") for t in soup3.thead.find_all("th")]
 df_home3_run = pd.DataFrame(columns=head3)
 
-# In[52]:
+# In[212]:
 
-context_table_q4 = []
-for t in soup3.tbody.find_all("tr"):
-    for a in t.find_all("td"):
-        context_table_q4.append(a.text)
-context_table_q4
 
-# In[53]:
+data3 = []
+table3 = soup3.find('table', attrs={'class': 'stats_table data_grid'})
+table_body3 = table3.find('tbody')
+rows3 = table_body3.find_all('tr')
+for row in rows3:
+    cols = row.find_all('td')
+    cols = [ele.text.strip() for ele in cols]
+    data3.append([ele for ele in cols if ele])
+data3
 
-context_table_q4_prettify = []
-for i in range(int(len(context_table_q4) / len(head))):
-    s = context_table_q4[i * len(head):(i + 1) * len(head)]
-    context_table_q4_prettify.append(s)
-
-# In[54]:
-
-context_table_q4_prettify
 for i in range(15):
-    df_home3_run.loc[i] = context_table_q4_prettify[i]
+    df_home3_run.loc[i] = data3[i]
 
 df_home3_run.drop("", axis=1)
 
-# In[55]:
+# In[213]:
+
 
 df_home3_run.to_csv('Question_2b_NL.csv')
 
-# In[56]:
+# In[214]:
+
 
 HR_inning_average = pd.DataFrame(df_home3_run['HR'], dtype=np.float)
 
-# In[57]:
+# In[215]:
+
 
 print('the average number of NL in the first inning is', HR_inning_average['HR'].mean())
 
-# In[58]:
+# In[216]:
+
 
 AL_inning = driver.find_element_by_css_selector('#st_hitting-0 > fieldset:nth-child(2) > label:nth-child(4)')
 
-# In[59]:
+# In[217]:
+
 
 AL_inning.click()
 
-# In[60]:
+# In[218]:
+
 
 data4_div = driver.find_element_by_id('datagrid')
 data4_html = data4_div.get_attribute('innerHTML')
@@ -321,42 +356,41 @@ soup4 = bs4.BeautifulSoup(data4_html, "html5lib")
 head4 = [t.text.replace("▼", "") for t in soup4.thead.find_all("th")]
 df_home4_run = pd.DataFrame(columns=head4)
 
-# In[61]:
+# In[219]:
 
-context_table_q5 = []
-for t in soup4.tbody.find_all("tr"):
-    for a in t.find_all("td"):
-        context_table_q5.append(a.text)
-context_table_q5
 
-# In[62]:
+data4 = []
+table4 = soup4.find('table', attrs={'class': 'stats_table data_grid'})
+table_body4 = table4.find('tbody')
+rows4 = table_body4.find_all('tr')
+for row in rows4:
+    cols = row.find_all('td')
+    cols = [ele.text.strip() for ele in cols]
+    data4.append([ele for ele in cols if ele])
+data4
 
-context_table_q5_prettify = []
-for i in range(int(len(context_table_q5) / len(head))):
-    s = context_table_q5[i * len(head):(i + 1) * len(head)]
-    context_table_q5_prettify.append(s)
-
-# In[63]:
-
-context_table_q5_prettify
 for i in range(15):
-    df_home4_run.loc[i] = context_table_q5_prettify[i]
+    df_home4_run.loc[i] = data4[i]
 
 df_home4_run.drop("", axis=1)
 
-# In[64]:
+# In[220]:
+
 
 df_home4_run.to_csv('Question_2b_AL.csv')
 
-# In[65]:
+# In[221]:
+
 
 HR_inning2_average = pd.DataFrame(df_home4_run['HR'], dtype=np.float)
 
-# In[66]:
+# In[222]:
+
 
 print('the average number of AL in the first inning is', HR_inning2_average['HR'].mean())
 
-# In[67]:
+# In[223]:
+
 
 if HR_inning_average['HR'].mean() >= HR_inning2_average['HR'].mean():
     print("the greatest average number of American league homeruns is NL:", HR_inning_average['HR'].mean())
@@ -367,266 +401,276 @@ else:
 
 # ### a)
 
-# In[68]:
+# In[225]:
 
-splits_bar = driver.find_element_by_id('st_hitting_hitting_splits')
-splits_bar_select = Select(splits_bar)
-splits_bar_select.select_by_visible_text('Select Split')
 
-# In[73]:
+split_bar = driver.find_element_by_css_selector('#st_hitting_hitting_splits > option:nth-child(1)')
+
+# In[226]:
+
+
+split_bar.click()
+
+# In[142]:
+
 
 MLB_bar = driver.find_element_by_css_selector('#sp_hitting-1 > fieldset:nth-child(1) > label:nth-child(2)')
 
-# In[74]:
+# In[143]:
+
 
 MLB_bar.click()
 
 # In[75]:
 
+
 season_2017 = driver.find_element_by_css_selector('#sp_hitting_season > option:nth-child(2)')
 
 # In[76]:
 
+
 season_2017.click()
 
-# In[77]:
+# In[227]:
+
 
 player_bar = driver.find_element_by_id('sp_parent')
 
-# In[78]:
+# In[228]:
+
 
 player_bar.click()
 
-# In[79]:
+# In[229]:
+
 
 Team_bar = driver.find_element_by_css_selector('#sp_hitting_team_id > option:nth-child(20)')
 
-# In[80]:
+# In[230]:
+
 
 Team_bar.click()
 
-# In[81]:
+# In[231]:
+
 
 AB_bar = driver.find_element_by_css_selector('th.dg-ab > abbr:nth-child(1)')
 
-# In[82]:
+# In[232]:
+
 
 AB_bar.click()
 
-# In[89]:
+# In[257]:
+
 
 data5_div = driver.find_element_by_id('datagrid')
 data5_html = data5_div.get_attribute('innerHTML')
 soup5 = bs4.BeautifulSoup(data5_html, "html5lib")
 head5 = [t.text.replace("▼", "") for t in soup5.thead.find_all("th")]
 df_home5_run = pd.DataFrame(columns=head5)
-df_home5_run
+df_home5a_run = df_home5_run.drop("", axis=1)
 
-# In[84]:
+# In[258]:
 
-context_table_q6 = []
-for t in soup5.tbody.find_all("tr"):
-    for a in t.find_all("td"):
-        context_table_q6.append(a.text)
-context_table_q6
 
-# In[91]:
+data5 = []
+table5 = soup5.find('table', attrs={'class': 'stats_table data_grid'})
+table_body5 = table5.find('tbody')
+rows5 = table_body5.find_all('tr')
+for row in rows5:
+    cols = row.find_all('td')
+    cols = [ele.text.strip() for ele in cols]
+    data5.append([ele for ele in cols if ele])
+data5
 
-context_table_q6_prettify = []
-for i in range(int(len(context_table_q6) / len(head5))):
-    s = context_table_q6[i * len(head5):(i + 1) * len(head5)]
-    context_table_q6_prettify.append(s)
-len(context_table_q6_prettify)
-
-# In[92]:
-
-context_table_q6_prettify
 for i in range(33):
-    df_home5_run.loc[i] = context_table_q6_prettify[i]
+    df_home5a_run.loc[i] = data5[i]
 
-df_home5_run.drop("", axis=1)
+df_home5a_run
 
-# In[96]:
+# In[270]:
 
-df_home5_run.to_csv('Question_3a.csv')
 
-# In[95]:
+df_home5a_run.to_csv('Question_3a.csv')
 
-AVG = df_home5_run.sort_values(by=['AVG'], ascending=False)
+# In[271]:
+
+
+AVG = df_home5a_run.sort_values(by=['AVG'], ascending=False)
 AVG
 
-# In[99]:
+# In[340]:
+
 
 Player_name = AVG.iloc[3, 1]
-pos = AVG.iloc[3, 5]
+pos = AVG.iloc[3, 4]
 print("the player name:", Player_name)
 print("the position:", pos)
 
 # ### b)
 
-# In[135]:
+# In[273]:
+
 
 RF_bar = driver.find_element_by_id('sp_hitting_position')
 RF_bar_select = Select(RF_bar)
 RF_bar_select.select_by_visible_text('RF')
 RF_bar.click()
 
-# In[136]:
+# In[290]:
+
 
 data6_div = driver.find_element_by_id('datagrid')
 data6_html = data5_div.get_attribute('innerHTML')
 soup6 = bs4.BeautifulSoup(data6_html, "html5lib")
 head6 = [t.text.replace("▼", "") for t in soup6.thead.find_all("th")]
 df_home6_run = pd.DataFrame(columns=head6)
-df_home6_run
+df_home6a_run = df_home6_run.drop("", axis=1)
 
-# In[137]:
+# In[293]:
 
-context_table_q7 = []
-for t in soup6.tbody.find_all("tr"):
-    for a in t.find_all("td"):
-        context_table_q7.append(a.text)
-context_table_q7
 
-# In[141]:
+data6 = []
+table6 = soup6.find('table', attrs={'class': 'stats_table data_grid'})
+table_body6 = table6.find('tbody')
+rows6 = table_body6.find_all('tr')
+for row in rows6:
+    cols = row.find_all('td')
+    cols = [ele.text.strip() for ele in cols]
+    data6.append([ele for ele in cols if ele])
+data6
 
-context_table_q7_prettify = []
-for i in range(int(len(context_table_q7) / len(head6))):
-    s = context_table_q7[i * len(head6):(i + 1) * len(head6)]
-    context_table_q7_prettify.append(s)
-context_table_q7_prettify
-
-# In[142]:
-
-context_table_q7_prettify
 for i in range(2):
-    df_home6_run.loc[i] = context_table_q7_prettify[i]
+    df_home6a_run.loc[i] = data6[i]
 
-df_home6_run.drop("", axis=1)
+df_home6a_run
 
-# In[143]:
+# In[294]:
 
-df_home6_run.to_csv('Question_3b_RF.csv')
 
-# In[144]:
+df_home6a_run.to_csv('Question_3b_RF.csv')
+
+# In[295]:
+
 
 RF_bar_select.select_by_visible_text('CF')
 
-# In[145]:
+# In[296]:
+
 
 data7_div = driver.find_element_by_id('datagrid')
 data7_html = data6_div.get_attribute('innerHTML')
 soup7 = bs4.BeautifulSoup(data7_html, "html5lib")
 head7 = [t.text.replace("▼", "") for t in soup7.thead.find_all("th")]
 df_home7_run = pd.DataFrame(columns=head7)
-df_home7_run
+df_home7a_run = df_home7_run.drop("", axis=1)
 
-# In[146]:
+# In[301]:
 
-context_table_q8 = []
-for t in soup7.tbody.find_all("tr"):
-    for a in t.find_all("td"):
-        context_table_q8.append(a.text)
-context_table_q8
 
-# In[147]:
+data7 = []
+table7 = soup7.find('table', attrs={'class': 'stats_table data_grid'})
+table_body7 = table7.find('tbody')
+rows7 = table_body7.find_all('tr')
+for row in rows7:
+    cols = row.find_all('td')
+    cols = [ele.text.strip() for ele in cols]
+    data7.append([ele for ele in cols if ele])
+data7
 
-context_table_q8_prettify = []
-for i in range(int(len(context_table_q8) / len(head7))):
-    s = context_table_q8[i * len(head7):(i + 1) * len(head7)]
-    context_table_q8_prettify.append(s)
-len(context_table_q8_prettify)
+for i in range(2):
+    df_home7a_run.loc[i] = data7[i]
 
-# In[148]:
+df_home7a_run
 
-context_table_q8_prettify
-for i in range(3):
-    df_home7_run.loc[i] = context_table_q8_prettify[i]
+# In[302]:
 
-df_home7_run.drop("", axis=1)
 
-# In[149]:
+df_home7a_run.to_csv('Question_3b_CF.csv')
 
-df_home7_run.to_csv('Question_3b_CF.csv')
+# In[303]:
 
-# In[150]:
 
 RF_bar_select.select_by_visible_text('LF')
 
-# In[151]:
+# In[304]:
+
 
 data8_div = driver.find_element_by_id('datagrid')
 data8_html = data8_div.get_attribute('innerHTML')
 soup8 = bs4.BeautifulSoup(data8_html, "html5lib")
 head8 = [t.text.replace("▼", "") for t in soup8.thead.find_all("th")]
 df_home8_run = pd.DataFrame(columns=head8)
-df_home8_run
+df_home8a_run = df_home8_run.drop("", axis=1)
 
-# In[152]:
+# In[307]:
 
-context_table_q9 = []
-for t in soup8.tbody.find_all("tr"):
-    for a in t.find_all("td"):
-        context_table_q9.append(a.text)
-context_table_q9
 
-# In[153]:
+data8 = []
+table8 = soup8.find('table', attrs={'class': 'stats_table data_grid'})
+table_body8 = table8.find('tbody')
+rows8 = table_body8.find_all('tr')
+for row in rows8:
+    cols = row.find_all('td')
+    cols = [ele.text.strip() for ele in cols]
+    data8.append([ele for ele in cols if ele])
+data8
 
-context_table_q9_prettify = []
-for i in range(int(len(context_table_q9) / len(head8))):
-    s = context_table_q9[i * len(head8):(i + 1) * len(head8)]
-    context_table_q9_prettify.append(s)
-len(context_table_q9_prettify)
-
-# In[154]:
-
-context_table_q9_prettify
 for i in range(2):
-    df_home8_run.loc[i] = context_table_q9_prettify[i]
+    df_home8a_run.loc[i] = data8[i]
 
-df_home8_run.drop("", axis=1)
+df_home8a_run
 
-# In[155]:
+# In[308]:
 
-df_home8_run.to_csv('Question_3b_LF.csv')
 
-# In[156]:
+df_home8a_run.to_csv('Question_3b_LF.csv')
 
-RF_AVG = df_home6_run.sort_values(by=['AVG'], ascending=False)
+# In[309]:
+
+
+RF_AVG = df_home8a_run.sort_values(by=['AVG'], ascending=False)
 RF_AVG
 
-# In[161]:
+# In[339]:
+
 
 RF_player = RF_AVG.iloc[0, 1]
-RF_pos = RF_AVG.iloc[0, 5]
+RF_pos = RF_AVG.iloc[0, 4]
 print("the player name:", RF_player)
 print("the position:", RF_pos)
 
-# In[162]:
+# In[311]:
 
-CF_AVG = df_home7_run.sort_values(by=['AVG'], ascending=False)
+
+CF_AVG = df_home7a_run.sort_values(by=['AVG'], ascending=False)
 CF_AVG
 
-# In[163]:
+# In[338]:
+
 
 CF_player = CF_AVG.iloc[0, 1]
-CF_pos = CF_AVG.iloc[0, 5]
+CF_pos = CF_AVG.iloc[0, 4]
 print("the player name:", CF_player)
 print("the position:", CF_pos)
 
-# In[164]:
+# In[313]:
 
-LF_AVG = df_home8_run.sort_values(by=['AVG'], ascending=False)
+
+LF_AVG = df_home8a_run.sort_values(by=['AVG'], ascending=False)
 LF_AVG
 
-# In[165]:
+# In[333]:
+
 
 LF_player = LF_AVG.iloc[0, 1]
-LF_pos = LF_AVG.iloc[0, 5]
+LF_pos = LF_AVG.iloc[0, 4]
 print("the player name:", LF_player)
 print("the position:", LF_pos)
 
-# In[169]:
+# In[341]:
+
 
 max_player = RF_AVG.iloc[0, 1]
 max_pos = RF_AVG.iloc[0, 5]
@@ -635,83 +679,89 @@ print("the best overall batting average player's position:", RF_pos)
 
 # # Problem_4
 
-# In[170]:
+# In[316]:
+
 
 AL_header_bar = driver.find_element_by_css_selector('#sp_hitting-1 > fieldset:nth-child(1) > label:nth-child(4)')
 
-# In[171]:
+# In[317]:
+
 
 AL_header_bar.click()
 
-# In[172]:
+# In[318]:
+
 
 All_team = driver.find_element_by_css_selector('#sp_hitting_team_id > option:nth-child(1)')
 
-# In[173]:
+# In[319]:
+
 
 All_team.click()
 
-# In[174]:
+# In[320]:
+
 
 All_position = driver.find_element_by_css_selector('#sp_hitting_position > option:nth-child(1)')
 
-# In[175]:
+# In[321]:
+
 
 All_position.click()
 
-# In[176]:
+# In[322]:
+
 
 season_2015 = driver.find_element_by_css_selector('#sp_hitting_season > option:nth-child(4)')
 
-# In[177]:
+# In[323]:
+
 
 season_2015.click()
 
-# In[178]:
+# In[325]:
+
 
 data9_div = driver.find_element_by_id('datagrid')
 data9_html = data9_div.get_attribute('innerHTML')
 soup9 = bs4.BeautifulSoup(data9_html, "html5lib")
 head9 = [t.text.replace("▼", "") for t in soup9.thead.find_all("th")]
 df_home9_run = pd.DataFrame(columns=head9)
-df_home9_run
+df_home9a_run = df_home9_run.drop("", axis=1)
 
-# In[179]:
+# In[326]:
 
-context_table_q10 = []
-for t in soup9.tbody.find_all("tr"):
-    for a in t.find_all("td"):
-        context_table_q10.append(a.text)
-context_table_q10
 
-# In[180]:
+data9 = []
+table9 = soup9.find('table', attrs={'class': 'stats_table data_grid'})
+table_body9 = table9.find('tbody')
+rows9 = table_body9.find_all('tr')
+for row in rows9:
+    cols = row.find_all('td')
+    cols = [ele.text.strip() for ele in cols]
+    data9.append([ele for ele in cols if ele])
+data9
 
-context_table_q10_prettify = []
-for i in range(int(len(context_table_q10) / len(head9))):
-    s = context_table_q10[i * len(head9):(i + 1) * len(head9)]
-    context_table_q10_prettify.append(s)
-len(context_table_q10_prettify)
-
-# In[181]:
-
-context_table_q10_prettify
 for i in range(50):
-    df_home9_run.loc[i] = context_table_q10_prettify[i]
+    df_home9a_run.loc[i] = data9[i]
 
-df_home9_run.drop("", axis=1)
+df_home9a_run
 
-# In[182]:
+# In[327]:
 
-df_home9_run.to_csv('Question_4.csv')
 
-# In[183]:
+df_home9a_run.to_csv('Question_4.csv')
 
-max_AB = df_home9_run.sort_values(by=['AB'], ascending=False)
+# In[330]:
+
+
+max_AB = df_home9a_run.sort_values(by=['AB'], ascending=False)
 max_AB
 
-# In[184]:
+# In[332]:
+
 
 AB_player = max_AB.iloc[0, 1]
-AB_pos = max_AB.iloc[0, 5]
+AB_pos = max_AB.iloc[0, 4]
 print("the max_AB player name:", AB_player)
 print("the max_AB position:", AB_pos)
