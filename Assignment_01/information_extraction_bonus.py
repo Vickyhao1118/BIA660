@@ -2,7 +2,7 @@ from __future__ import print_function
 import re
 import spacy
 
-###from pyclausie import ClausIE
+###Hao Cheng--assignment_01_bonus
 
 
 nlp = spacy.load('en')
